@@ -48,7 +48,7 @@ namespace CSharpTest.Net.RpcLibrary
             set { Log.VerboseEnabled = value; }
         }
         /// <summary>
-        /// Constructs an RPC server for the given interface guid, the guid is used to identify multiple rpc
+        /// Constructs an RPC server for the given interface guid/version, the guid/version is used to identify multiple rpc
         /// servers/services within a single process.
         /// </summary>
         public RpcServerApi(RpcInterface @interface)
@@ -56,7 +56,7 @@ namespace CSharpTest.Net.RpcLibrary
         {
         }
         /// <summary>
-        /// Constructs an RPC server for the given interface guid, the guid is used to identify multiple rpc
+        /// Constructs an RPC server for the given interface guid/version, the guid/version is used to identify multiple rpc
         /// servers/services within a single process.
         /// </summary>
         public RpcServerApi(RpcInterface @interface, int maxCalls, int maxRequestBytes, bool allowAnonTcp)
