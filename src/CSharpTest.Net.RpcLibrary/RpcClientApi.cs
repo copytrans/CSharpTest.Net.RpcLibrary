@@ -21,6 +21,7 @@ using CSharpTest.Net.RpcLibrary.Interop.Structs;
 
 namespace CSharpTest.Net.RpcLibrary
 {
+ 
     /// <summary>
     /// Provides a connection-based wrapper around the RPC client
     /// </summary>
@@ -28,7 +29,7 @@ namespace CSharpTest.Net.RpcLibrary
     public class RpcClientApi : IDisposable
     {
         /// <summary> The interface Id the client is connected to </summary>
-        public readonly Guid IID;
+        public readonly RpcInterface _interface;
         private readonly RpcProtseq _protocol;
         private readonly string _binding;
         private readonly RpcHandle _handle;
@@ -36,10 +37,10 @@ namespace CSharpTest.Net.RpcLibrary
         /// <summary>
         /// Connects to the provided server interface with the given protocol and server:endpoint
         /// </summary>
-        public RpcClientApi(Guid iid, RpcProtseq protocol, string server, string endpoint)
+        public RpcClientApi(RpcInterface @interface, RpcProtseq protocol, string server, string endpoint)
         {
             _handle = new RpcClientHandle();
-            IID = iid;
+            _interface = @interface;
             _protocol = protocol;
             Log.Verbose("RpcClient('{0}:{1}')", server, endpoint);
 
@@ -139,7 +140,7 @@ namespace CSharpTest.Net.RpcLibrary
                 AuthenticateAs(Anonymous);
             }
             Log.Verbose("RpcExecute(byte[{0}])", input.Length);
-            return InvokeRpc(_handle, IID, input);
+            return InvokeRpc(_handle, _interface, input);
         }
 
         /* ********************************************************************
@@ -264,14 +265,14 @@ namespace CSharpTest.Net.RpcLibrary
                                                        [Out] out IntPtr Response);
 
         [MethodImpl(MethodImplOptions.NoInlining | (MethodImplOptions)64 /* MethodImplOptions.NoOptimization undefined in 2.0 */)]
-        private static byte[] InvokeRpc(RpcHandle handle, Guid iid, byte[] input)
+        private static byte[] InvokeRpc(RpcHandle handle, RpcInterface @interface, byte[] input)
         {
             Log.Verbose("InvokeRpc on {0}, sending {1} bytes", handle.Handle, input.Length);
             Ptr<MIDL_STUB_DESC> pStub;
             if (!handle.GetPtr(out pStub))
             {
                 pStub =
-                    handle.CreatePtr(new MIDL_STUB_DESC(handle, handle.Pin(new RPC_CLIENT_INTERFACE(iid)),
+                    handle.CreatePtr(new MIDL_STUB_DESC(handle, handle.Pin(new RPC_CLIENT_INTERFACE(@interface.IID, @interface.VERSION)),
                                                         RpcApi.TYPE_FORMAT,
                                                         false));
             }

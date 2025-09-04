@@ -29,21 +29,23 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
         private IntPtr /* ULONG_PTR */ nCount;
         private IntPtr /* PMIDL_SYNTAX_INFO */ pSyntaxInfo;
 
-        internal static Ptr<RPC_SERVER_INTERFACE> Create(RpcHandle handle, Guid iid, Byte[] formatTypes,
+        internal static Ptr<RPC_SERVER_INTERFACE> Create(RpcHandle handle, RpcInterface @interface, 
+                                                         Byte[] formatTypes,
                                                          Byte[] formatProc,
                                                          RpcExecute fnExecute)
         {
             Ptr<MIDL_SERVER_INFO> pServer = handle.CreatePtr(new MIDL_SERVER_INFO());
 
             MIDL_SERVER_INFO temp = new MIDL_SERVER_INFO();
-            return temp.Configure(handle, pServer, iid, formatTypes, formatProc, fnExecute);
+            return temp.Configure(handle, pServer, @interface, formatTypes, formatProc, fnExecute);
         }
 
-        private Ptr<RPC_SERVER_INTERFACE> Configure(RpcHandle handle, Ptr<MIDL_SERVER_INFO> me, Guid iid,
+        private Ptr<RPC_SERVER_INTERFACE> Configure(RpcHandle handle, Ptr<MIDL_SERVER_INFO> me, RpcInterface @interface,
                                                     Byte[] formatTypes,
-                                                    Byte[] formatProc, RpcExecute fnExecute)
+                                                    Byte[] formatProc, 
+                                                    RpcExecute fnExecute)
         {
-            Ptr<RPC_SERVER_INTERFACE> svrIface = handle.CreatePtr(new RPC_SERVER_INTERFACE(handle, me, iid));
+            Ptr<RPC_SERVER_INTERFACE> svrIface = handle.CreatePtr(new RPC_SERVER_INTERFACE(handle, me, @interface));
             Ptr<MIDL_STUB_DESC> stub = handle.CreatePtr(new MIDL_STUB_DESC(handle, svrIface.Handle, formatTypes, true));
             pStubDesc = stub.Handle;
 

@@ -35,7 +35,7 @@ namespace CSharpTest.Net.RpcLibrary
         private int _maxCalls;
 
         /// <summary> The interface Id the service is using </summary>
-        public readonly Guid IID;
+        public readonly RpcInterface _interface;
         private readonly RpcHandle _handle;
         private RpcExecuteHandler _handler;
 
@@ -51,24 +51,24 @@ namespace CSharpTest.Net.RpcLibrary
         /// Constructs an RPC server for the given interface guid, the guid is used to identify multiple rpc
         /// servers/services within a single process.
         /// </summary>
-        public RpcServerApi(Guid iid)
-            : this(iid, MAX_CALL_LIMIT, DEF_REQ_LIMIT, false)
+        public RpcServerApi(RpcInterface @interface)
+            : this(@interface, MAX_CALL_LIMIT, DEF_REQ_LIMIT, false)
         {
         }
         /// <summary>
         /// Constructs an RPC server for the given interface guid, the guid is used to identify multiple rpc
         /// servers/services within a single process.
         /// </summary>
-        public RpcServerApi(Guid iid, int maxCalls, int maxRequestBytes, bool allowAnonTcp)
+        public RpcServerApi(RpcInterface @interface, int maxCalls, int maxRequestBytes, bool allowAnonTcp)
         {
-            IID = iid;
+            _interface = @interface;
             _maxCalls = maxCalls;
             _handle = new RpcServerHandle();
 
             // Guid.Empty to avoid registration of any interface allowing access to AddProtocol/AddAuthentication
             // without creating a channel
-            if (!Guid.Empty.Equals(iid))
-                ServerRegisterInterface(_handle, IID, RpcEntryPoint, maxCalls, maxRequestBytes, allowAnonTcp);
+            if (!Guid.Empty.Equals(_interface.IID))
+                ServerRegisterInterface(_handle, _interface, RpcEntryPoint, maxCalls, maxRequestBytes, allowAnonTcp);
         }
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace CSharpTest.Net.RpcLibrary
         [DllImport("Rpcrt4.dll", EntryPoint = "RpcServerRegisterIf", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern RpcError RpcServerRegisterIf(IntPtr IfSpec, IntPtr MgrTypeUuid, IntPtr MgrEpv);
 
-        private static void ServerRegisterInterface(RpcHandle handle, Guid iid, RpcExecute fnExec, int maxCalls, int maxRequestBytes, bool allowAnonTcp)
+        private static void ServerRegisterInterface(RpcHandle handle, RpcInterface @interface, RpcExecute fnExec, int maxCalls, int maxRequestBytes, bool allowAnonTcp)
         {
             const int RPC_IF_ALLOW_CALLBACKS_WITH_NO_AUTH = 0x0010;
             int flags = 0;
@@ -270,7 +270,7 @@ namespace CSharpTest.Net.RpcLibrary
                 fnAuth = hAuthCall.Handle;
             }
 
-            Ptr<RPC_SERVER_INTERFACE> sIf = MIDL_SERVER_INFO.Create(handle, iid, RpcApi.TYPE_FORMAT, RpcApi.FUNC_FORMAT, fnExec);
+            Ptr<RPC_SERVER_INTERFACE> sIf = MIDL_SERVER_INFO.Create(handle, @interface, RpcApi.TYPE_FORMAT, RpcApi.FUNC_FORMAT, fnExec);
 
             if (!allowAnonTcp && maxRequestBytes < 0)
                 RpcException.Assert(RpcServerRegisterIf(sIf.Handle, IntPtr.Zero, IntPtr.Zero));

@@ -34,10 +34,10 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
                                                           0x10,
                                                           0x48, 0x60);
 
-        public RPC_SERVER_INTERFACE(RpcHandle handle, Ptr<MIDL_SERVER_INFO> pServer, Guid iid)
+        public RPC_SERVER_INTERFACE(RpcHandle handle, Ptr<MIDL_SERVER_INFO> pServer, RpcInterface @interface)
         {
             Length = (uint) Marshal.SizeOf(typeof (RPC_CLIENT_INTERFACE));
-            InterfaceId = new RPC_SYNTAX_IDENTIFIER() {SyntaxGUID = iid, SyntaxVersion = RPC_VERSION.INTERFACE_VERSION};
+            InterfaceId = new RPC_SYNTAX_IDENTIFIER() {SyntaxGUID = @interface.IID, SyntaxVersion = @interface.VERSION};
             TransferSyntax = new RPC_SYNTAX_IDENTIFIER()
                                  {SyntaxGUID = IID_SYNTAX, SyntaxVersion = RPC_VERSION.SYNTAX_VERSION};
 
