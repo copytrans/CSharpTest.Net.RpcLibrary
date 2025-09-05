@@ -87,7 +87,7 @@ namespace CSharpTest.Net.RpcLibrary
             this._METHOD_COUNT = MethodCount;
             this._TYPE_FORMAT = TypeFormat;
             this._FUNC_FORMAT = FuncFormat;
-            this._FUNC_FORMAT_PTR = new Ptr<byte[]>(FUNC_FORMAT);
+            this._FUNC_FORMAT_PTR = new Ptr<byte[]>(_FUNC_FORMAT);
 
 
         }
