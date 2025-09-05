@@ -270,7 +270,7 @@ namespace CSharpTest.Net.RpcLibrary
                 fnAuth = hAuthCall.Handle;
             }
 
-            Ptr<RPC_SERVER_INTERFACE> sIf = MIDL_SERVER_INFO.Create(handle, @interface, RpcApi.TYPE_FORMAT, RpcApi.FUNC_FORMAT, fnExec);
+            Ptr<RPC_SERVER_INTERFACE> sIf = MIDL_SERVER_INFO.Create(handle, @interface, fnExec);
 
             if (!allowAnonTcp && maxRequestBytes < 0)
                 RpcException.Assert(RpcServerRegisterIf(sIf.Handle, IntPtr.Zero, IntPtr.Zero));

@@ -29,30 +29,24 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
         private IntPtr /* ULONG_PTR */ nCount;
         private IntPtr /* PMIDL_SYNTAX_INFO */ pSyntaxInfo;
 
-        internal static Ptr<RPC_SERVER_INTERFACE> Create(RpcHandle handle, RpcInterface @interface, 
-                                                         Byte[] formatTypes,
-                                                         Byte[] formatProc,
-                                                         RpcExecute fnExecute)
+        internal static Ptr<RPC_SERVER_INTERFACE> Create(RpcHandle handle, RpcInterface @interface, RpcExecute fnExecute)
         {
             Ptr<MIDL_SERVER_INFO> pServer = handle.CreatePtr(new MIDL_SERVER_INFO());
 
             MIDL_SERVER_INFO temp = new MIDL_SERVER_INFO();
-            return temp.Configure(handle, pServer, @interface, formatTypes, formatProc, fnExecute);
+            return temp.Configure(handle, pServer, @interface, fnExecute);
         }
 
-        private Ptr<RPC_SERVER_INTERFACE> Configure(RpcHandle handle, Ptr<MIDL_SERVER_INFO> me, RpcInterface @interface,
-                                                    Byte[] formatTypes,
-                                                    Byte[] formatProc, 
-                                                    RpcExecute fnExecute)
+        private Ptr<RPC_SERVER_INTERFACE> Configure(RpcHandle handle, Ptr<MIDL_SERVER_INFO> me, RpcInterface @interface, RpcExecute fnExecute)
         {
             Ptr<RPC_SERVER_INTERFACE> svrIface = handle.CreatePtr(new RPC_SERVER_INTERFACE(handle, me, @interface));
-            Ptr<MIDL_STUB_DESC> stub = handle.CreatePtr(new MIDL_STUB_DESC(handle, svrIface.Handle, formatTypes, true));
+            Ptr<MIDL_STUB_DESC> stub = handle.CreatePtr(new MIDL_STUB_DESC(handle, svrIface.Handle, @interface.TYPE_FORMAT, true));
             pStubDesc = stub.Handle;
 
             IntPtr ptrFunction = handle.PinFunction(fnExecute);
             DispatchTable = handle.Pin(ptrFunction);
 
-            ProcString = handle.Pin(formatProc);
+            ProcString = handle.Pin(@interface.FUNC_FORMAT);
             FmtStringOffset = handle.Pin(new int[1] {0});
 
             ThunkTable = IntPtr.Zero;

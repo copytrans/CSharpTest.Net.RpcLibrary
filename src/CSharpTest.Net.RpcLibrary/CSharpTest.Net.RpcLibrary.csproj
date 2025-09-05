@@ -45,6 +45,7 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Interop\UsageCounter.cs" />
     <Compile Include="Interop\RpcApi.cs" />
+    <Compile Include="Interop\RpcUtils.cs" />
     <Compile Include="IRpcClientInfo.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -55,7 +56,7 @@
     <Compile Include="Interop\RpcClientInfo.cs" />
     <Compile Include="Interop\RpcHandle.cs" />
     <Compile Include="RpcException.cs" />
-    <Compile Include="RpcInterface.cs" />
+    <Compile Include="Interop\RpcInterface.cs" />
     <Compile Include="RpcServerApi.cs" />
     <Compile Include="Interop\StructPtr.cs" />
     <Compile Include="Interop\Structs\COMM_FAULT_OFFSETS.cs" />

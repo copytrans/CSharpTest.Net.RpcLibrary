@@ -271,21 +271,22 @@ namespace CSharpTest.Net.RpcLibrary
             Ptr<MIDL_STUB_DESC> pStub;
             if (!handle.GetPtr(out pStub))
             {
-                pStub =
-                    handle.CreatePtr(new MIDL_STUB_DESC(handle, handle.Pin(new RPC_CLIENT_INTERFACE(@interface.IID, @interface.VERSION)),
-                                                        RpcApi.TYPE_FORMAT,
-                                                        false));
+                var midl_stub_desc = new MIDL_STUB_DESC(handle,
+                        handle.Pin(new RPC_CLIENT_INTERFACE(@interface.IID, @interface.VERSION)),
+                        @interface.TYPE_FORMAT,
+                        false);
+                pStub = handle.CreatePtr(midl_stub_desc);
             }
             int szResponse = 0;
             IntPtr response, result;
 
             using (Ptr<byte[]> pInputBuffer = new Ptr<byte[]>(input))
             {
-                if (RpcApi.Is64BitProcess)
+                if (RpcUtils.Is64BitProcess())
                 {
                     try
                     {
-                        result = NdrClientCall2x64(pStub.Handle, RpcApi.FUNC_FORMAT_PTR.Handle, handle.Handle,
+                        result = NdrClientCall2x64(pStub.Handle, @interface.FUNC_FORMAT_PTR.Handle, handle.Handle,
                                                    input.Length,
                                                    pInputBuffer.Handle, out szResponse, out response);
                     }
@@ -310,7 +311,7 @@ namespace CSharpTest.Net.RpcLibrary
 
                         try
                         {
-                            result = NdrClientCall2x86(pStub.Handle, RpcApi.FUNC_FORMAT_PTR.Handle, pStack32.Handle);
+                            result = NdrClientCall2x86(pStub.Handle, @interface.FUNC_FORMAT_PTR.Handle, pStack32.Handle);
                         }
                         catch (SEHException ex)
                         {
