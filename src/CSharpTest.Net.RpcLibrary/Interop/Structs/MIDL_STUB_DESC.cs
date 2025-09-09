@@ -50,13 +50,13 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
         private IntPtr /*NDR_EXPR_DESC*/ pExprInfo;
         // Fields up to now present in win2000 release.
 
-        internal static MIDL_STUB_DESC FromRpcInterface(RpcHandle handle, RpcInterface @interface, Ptr<RPC_SERVER_INTERFACE> serverInterfacePtr)
+        private static MIDL_STUB_DESC FromRpcInterface(RpcHandle handle, RpcInterface @interface)
         {
             var result = new MIDL_STUB_DESC();
-            result.RpcInterfaceInformation = serverInterfacePtr.Handle;
+            // result.RpcInterfaceInformation = serverInterfacePtr.Handle;
             result.pfnAllocate = RpcApi.AllocPtr.Handle;
             result.pfnFree = RpcApi.FreePtr.Handle;
-            result.pAutoBindHandle = IntPtr.Zero;
+            // result.pAutoBindHandle = IntPtr.Zero;
             result.apfnNdrRundownRoutines = new IntPtr();
             result.aGenericBindingRoutinePairs = new IntPtr();
             result.apfnExprEval = new IntPtr();
@@ -66,7 +66,7 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
             result.Version = 0x60001u;
             result.pMallocFreeStruct = new IntPtr();
             result.MIDLVersion = 0x8010274;
-            result.CommFaultOffsets = IntPtr.Zero;
+            // result.CommFaultOffsets = IntPtr.Zero;
             result.aUserMarshalQuadruple = new IntPtr();
             result.NotifyRoutineTable = new IntPtr();
             result.mFlags = new IntPtr(0x00000001);
@@ -76,30 +76,24 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
             return result;
         }
 
-        public MIDL_STUB_DESC(RpcHandle handle, IntPtr interfaceInfo, Byte[] formatTypes, bool serverSide)
+        internal static MIDL_STUB_DESC FromRpcServerInterface(RpcHandle handle, RpcInterface @interface, Ptr<RPC_SERVER_INTERFACE> serverInterfacePtr)
         {
-            RpcInterfaceInformation = interfaceInfo;
-            pfnAllocate = RpcApi.AllocPtr.Handle;
-            pfnFree = RpcApi.FreePtr.Handle;
-            pAutoBindHandle = serverSide ? IntPtr.Zero : handle.Pin(new IntPtr());
-            apfnNdrRundownRoutines = new IntPtr();
-            aGenericBindingRoutinePairs = new IntPtr();
-            apfnExprEval = new IntPtr();
-            aXmitQuintuple = new IntPtr();
-            pFormatTypes = handle.Pin(formatTypes);
-            fCheckBounds = 1;
-            Version = 0x60001u;
-            pMallocFreeStruct = new IntPtr();
-            MIDLVersion = 0x70001f4;
-            CommFaultOffsets = serverSide
-                                   ? IntPtr.Zero
-                                   : handle.Pin(new COMM_FAULT_OFFSETS() {CommOffset = -1, FaultOffset = -1});
-            aUserMarshalQuadruple = new IntPtr();
-            NotifyRoutineTable = new IntPtr();
-            mFlags = new IntPtr(0x8010274);
-            CsRoutineTables = new IntPtr();
-            ProxyServerInfo = new IntPtr();
-            pExprInfo = new IntPtr();
+            var result = FromRpcInterface(handle, @interface);
+            result.RpcInterfaceInformation = serverInterfacePtr.Handle;
+            result.pAutoBindHandle = IntPtr.Zero;
+            result.CommFaultOffsets = IntPtr.Zero;
+            return result;
         }
+
+        internal static MIDL_STUB_DESC FromRpcClientInterface(RpcHandle handle, RpcInterface @interface)
+        {
+            var result = FromRpcInterface(handle, @interface);
+            var RpcInterfaceInformation = RPC_CLIENT_INTERFACE.FromRpcInterface(@interface);
+            result.RpcInterfaceInformation = handle.Pin(RpcInterfaceInformation);
+            result.pAutoBindHandle = handle.Pin(new IntPtr());
+            result.CommFaultOffsets = handle.Pin(new COMM_FAULT_OFFSETS() { CommOffset = -1, FaultOffset = -1 }); ;
+            return result;
+        }
+
     }
 }

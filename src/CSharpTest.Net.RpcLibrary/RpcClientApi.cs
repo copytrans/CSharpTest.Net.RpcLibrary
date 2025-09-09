@@ -271,10 +271,7 @@ namespace CSharpTest.Net.RpcLibrary
             Ptr<MIDL_STUB_DESC> pStub;
             if (!handle.GetPtr(out pStub))
             {
-                var midl_stub_desc = new MIDL_STUB_DESC(handle,
-                        handle.Pin(new RPC_CLIENT_INTERFACE(@interface.IID, @interface.VERSION)),
-                        @interface.TYPE_FORMAT,
-                        false);
+                MIDL_STUB_DESC midl_stub_desc = MIDL_STUB_DESC.FromRpcClientInterface(handle, @interface);
                 pStub = handle.CreatePtr(midl_stub_desc);
             }
             int szResponse = 0;

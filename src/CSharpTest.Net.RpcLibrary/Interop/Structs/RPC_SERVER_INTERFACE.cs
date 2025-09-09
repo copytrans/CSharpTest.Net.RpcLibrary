@@ -53,32 +53,5 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
         IntPtr InterpreterInfo;
         uint Flags;
 
-
-
-        internal RPC_SERVER_INTERFACE(RpcHandle handle, Ptr<MIDL_SERVER_INFO> pServer, RpcInterface @interface)
-        {
-            Length = (uint) Marshal.SizeOf(typeof (RPC_SERVER_INTERFACE));
-            InterfaceId = new RPC_SYNTAX_IDENTIFIER() {SyntaxGUID = @interface.IID, SyntaxVersion = @interface.VERSION};
-            TransferSyntax = new RPC_SYNTAX_IDENTIFIER()
-                                 {SyntaxGUID = IID_SYNTAX, SyntaxVersion = RPC_VERSION.SYNTAX_VERSION};
-
-            var DispatchTableEntries = new RPC_DISPATCH_TABLE_Entry[@interface.METHOD_COUNT];
-            for (var i = 0; i < @interface.METHOD_COUNT; i++)
-            {
-                DispatchTableEntries[i] = new RPC_DISPATCH_TABLE_Entry()
-                { DispatchMethod = RpcApi.ServerEntry.Handle, Zero = IntPtr.Zero };
-            }
-            RPC_DISPATCH_TABLE fnTable = new RPC_DISPATCH_TABLE();
-            fnTable.DispatchTableCount = @interface.METHOD_COUNT;
-            fnTable.DispatchTable = handle.Pin(DispatchTableEntries);
-            fnTable.Reserved = IntPtr.Zero;
-
-            DispatchTable = handle.Pin(fnTable);
-            RpcProtseqEndpointCount = 0u;
-            RpcProtseqEndpoint = IntPtr.Zero;
-            DefaultManagerEpv = IntPtr.Zero;
-            InterpreterInfo = pServer.Handle;
-            Flags = 0x04000000u;
-        }
     }
 }

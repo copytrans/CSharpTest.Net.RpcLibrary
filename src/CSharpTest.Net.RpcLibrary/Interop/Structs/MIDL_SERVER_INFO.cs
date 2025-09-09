@@ -32,7 +32,7 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
         internal static MIDL_SERVER_INFO FromRpcInterface(RpcHandle handle, RpcInterface @interface, Ptr<RPC_SERVER_INTERFACE> serverInterfacePtr, RpcExecute fnExecute)
         {
             MIDL_SERVER_INFO result = new MIDL_SERVER_INFO();
-            MIDL_STUB_DESC StubDesc = MIDL_STUB_DESC.FromRpcInterface(handle, @interface, serverInterfacePtr);
+            MIDL_STUB_DESC StubDesc = MIDL_STUB_DESC.FromRpcServerInterface(handle, @interface, serverInterfacePtr);
             result.pStubDesc = handle.Pin(StubDesc);
             var DispatchTable = new IntPtr[@interface.METHOD_COUNT];
             for (var i = 0; i < DispatchTable.Length; i++)
@@ -49,36 +49,6 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
             return result;
         }
 
-
-        internal static Ptr<RPC_SERVER_INTERFACE> Create(RpcHandle handle, RpcInterface @interface, RpcExecute fnExecute)
-        {
-            Ptr<MIDL_SERVER_INFO> pServer = handle.CreatePtr(new MIDL_SERVER_INFO());
-
-            MIDL_SERVER_INFO temp = new MIDL_SERVER_INFO();
-            return temp.Configure(handle, pServer, @interface, fnExecute);
-        }
-
-        private Ptr<RPC_SERVER_INTERFACE> Configure(RpcHandle handle, Ptr<MIDL_SERVER_INFO> me, RpcInterface @interface, RpcExecute fnExecute)
-        {
-            Ptr<RPC_SERVER_INTERFACE> svrIface = handle.CreatePtr(new RPC_SERVER_INTERFACE(handle, me, @interface));
-            Ptr<MIDL_STUB_DESC> stub = handle.CreatePtr(new MIDL_STUB_DESC(handle, svrIface.Handle, @interface.TYPE_FORMAT, true));
-            pStubDesc = stub.Handle;
-
-            IntPtr ptrFunction = handle.PinFunction(fnExecute);
-            DispatchTable = handle.Pin(ptrFunction);
-
-            ProcString = handle.Pin(@interface.FUNC_FORMAT);
-            FmtStringOffset = handle.Pin(new int[1] {0});
-
-            ThunkTable = IntPtr.Zero;
-            pTransferSyntax = IntPtr.Zero;
-            nCount = IntPtr.Zero;
-            pSyntaxInfo = IntPtr.Zero;
-
-            //Copy us back into the pinned address
-            Marshal.StructureToPtr(this, me.Handle, false);
-            return svrIface;
-        }
     }
 
     internal delegate uint RpcExecute(
