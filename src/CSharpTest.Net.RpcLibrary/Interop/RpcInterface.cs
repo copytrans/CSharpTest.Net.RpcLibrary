@@ -64,14 +64,14 @@ namespace CSharpTest.Net.RpcLibrary
         /// </summary>
         public static RpcInterface Default(Guid IID)
         {
-            return new RpcInterface(IID, 1, 0, 1, DEFAULT_FUNC_FORMAT, new int[] { 0 }, DEFAULT_TYPE_FORMAT);
+            return new RpcInterface(IID, 1, 0, 1, DEFAULT_FUNC_FORMAT, new ushort[] { 0 }, DEFAULT_TYPE_FORMAT);
         }
 
         readonly Guid _IID;
         readonly RPC_VERSION _VERSION;
         readonly ushort _METHOD_COUNT;
         readonly byte[] _FUNC_FORMAT;
-        readonly int[] _FUNC_FORMAT_OFFSETS;
+        readonly ushort[] _FUNC_FORMAT_OFFSETS;
         readonly byte[] _TYPE_FORMAT;
 
 
@@ -79,7 +79,7 @@ namespace CSharpTest.Net.RpcLibrary
         /// Populates the instance
         /// </summary>
         public RpcInterface(Guid IID, ushort MajorVersion, ushort MinorVersion, ushort MethodCount,
-            byte[] FuncFormat, int[] FuncFormatOffsets, byte[] TypeFormat)
+            byte[] FuncFormat, ushort[] FuncFormatOffsets, byte[] TypeFormat)
         {
             this._IID = IID;
             this._VERSION.MajorVersion = MajorVersion;
@@ -94,7 +94,7 @@ namespace CSharpTest.Net.RpcLibrary
         internal RPC_VERSION VERSION { get { return _VERSION; } }
         internal ushort METHOD_COUNT { get { return _METHOD_COUNT; } }
         internal byte[] FUNC_FORMAT { get { return _FUNC_FORMAT; } }
-        internal int[] FUNC_FORMAT_OFFSETS { get { return _FUNC_FORMAT_OFFSETS; } }
+        internal ushort[] FUNC_FORMAT_OFFSETS { get { return _FUNC_FORMAT_OFFSETS; } }
         internal byte[] TYPE_FORMAT { get { return _TYPE_FORMAT; } }
 
 
