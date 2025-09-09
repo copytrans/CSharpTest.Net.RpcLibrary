@@ -23,6 +23,21 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
         public uint DispatchTableCount;
         public IntPtr DispatchTable;
         public IntPtr Reserved;
+
+        internal static RPC_DISPATCH_TABLE FromRpcInterface(RpcHandle handle, RpcInterface @interface)
+        {
+            var DispatchTableEntries = new RPC_DISPATCH_TABLE_Entry[@interface.METHOD_COUNT];
+            for (var i = 0; i < @interface.METHOD_COUNT; i++)
+            {
+                DispatchTableEntries[i] = new RPC_DISPATCH_TABLE_Entry()
+                { DispatchMethod = RpcApi.ServerEntry.Handle, Zero = IntPtr.Zero };
+            }
+            RPC_DISPATCH_TABLE result = new RPC_DISPATCH_TABLE();
+            result.DispatchTableCount = @interface.METHOD_COUNT;
+            result.DispatchTable = handle.Pin(DispatchTableEntries);
+            result.Reserved = IntPtr.Zero;
+            return result;
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]

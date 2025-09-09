@@ -50,6 +50,32 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
         private IntPtr /*NDR_EXPR_DESC*/ pExprInfo;
         // Fields up to now present in win2000 release.
 
+        internal static MIDL_STUB_DESC FromRpcInterface(RpcHandle handle, RpcInterface @interface, Ptr<RPC_SERVER_INTERFACE> serverInterfacePtr)
+        {
+            var result = new MIDL_STUB_DESC();
+            result.RpcInterfaceInformation = serverInterfacePtr.Handle;
+            result.pfnAllocate = RpcApi.AllocPtr.Handle;
+            result.pfnFree = RpcApi.FreePtr.Handle;
+            result.pAutoBindHandle = IntPtr.Zero;
+            result.apfnNdrRundownRoutines = new IntPtr();
+            result.aGenericBindingRoutinePairs = new IntPtr();
+            result.apfnExprEval = new IntPtr();
+            result.aXmitQuintuple = new IntPtr();
+            result.pFormatTypes = handle.Pin(@interface.TYPE_FORMAT);
+            result.fCheckBounds = 1;
+            result.Version = 0x60001u;
+            result.pMallocFreeStruct = new IntPtr();
+            result.MIDLVersion = 0x8010274;
+            result.CommFaultOffsets = IntPtr.Zero;
+            result.aUserMarshalQuadruple = new IntPtr();
+            result.NotifyRoutineTable = new IntPtr();
+            result.mFlags = new IntPtr(0x00000001);
+            result.CsRoutineTables = new IntPtr();
+            result.ProxyServerInfo = new IntPtr();
+            result.pExprInfo = new IntPtr();
+            return result;
+        }
+
         public MIDL_STUB_DESC(RpcHandle handle, IntPtr interfaceInfo, Byte[] formatTypes, bool serverSide)
         {
             RpcInterfaceInformation = interfaceInfo;
@@ -62,7 +88,7 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
             aXmitQuintuple = new IntPtr();
             pFormatTypes = handle.Pin(formatTypes);
             fCheckBounds = 1;
-            Version = 0x50002u;
+            Version = 0x60001u;
             pMallocFreeStruct = new IntPtr();
             MIDLVersion = 0x70001f4;
             CommFaultOffsets = serverSide
@@ -70,7 +96,7 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
                                    : handle.Pin(new COMM_FAULT_OFFSETS() {CommOffset = -1, FaultOffset = -1});
             aUserMarshalQuadruple = new IntPtr();
             NotifyRoutineTable = new IntPtr();
-            mFlags = new IntPtr(0x00000001);
+            mFlags = new IntPtr(0x8010274);
             CsRoutineTables = new IntPtr();
             ProxyServerInfo = new IntPtr();
             pExprInfo = new IntPtr();

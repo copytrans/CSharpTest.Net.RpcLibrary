@@ -20,21 +20,42 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
     [StructLayout(LayoutKind.Sequential)]
     internal struct RPC_SERVER_INTERFACE
     {
-        public uint Length;
-        public RPC_SYNTAX_IDENTIFIER InterfaceId;
-        public RPC_SYNTAX_IDENTIFIER TransferSyntax;
-        public IntPtr /*PRPC_DISPATCH_TABLE*/ DispatchTable;
-        public uint RpcProtseqEndpointCount;
-        public IntPtr /*PRPC_PROTSEQ_ENDPOINT*/ RpcProtseqEndpoint;
-        public IntPtr DefaultManagerEpv;
-        public IntPtr InterpreterInfo;
-        public uint Flags;
-
-        public static readonly Guid IID_SYNTAX = new Guid(0x8A885D04u, 
+         public static readonly Guid IID_SYNTAX = new Guid(0x8A885D04u, 
                                                         0x1CEB, 0x11C9, 
                                                         0x9F, 0xE8, 0x08, 0x00, 0x2B, 0x10, 0x48, 0x60);
 
-        public RPC_SERVER_INTERFACE(RpcHandle handle, Ptr<MIDL_SERVER_INFO> pServer, RpcInterface @interface)
+        internal static Ptr<RPC_SERVER_INTERFACE> FromRpcInterface(RpcHandle handle, RpcInterface @interface, RpcExecute fnExecute)
+        {
+            var result = handle.CreatePtr(new RPC_SERVER_INTERFACE());
+            var data = new RPC_SERVER_INTERFACE();
+            data.Length = (uint)Marshal.SizeOf(typeof(RPC_SERVER_INTERFACE));
+            data.InterfaceId = new RPC_SYNTAX_IDENTIFIER() { SyntaxGUID = @interface.IID, SyntaxVersion = @interface.VERSION };
+            data.TransferSyntax = new RPC_SYNTAX_IDENTIFIER() { SyntaxGUID = IID_SYNTAX, SyntaxVersion = RPC_VERSION.SYNTAX_VERSION };
+            var DispatchTable = RPC_DISPATCH_TABLE.FromRpcInterface(handle, @interface);
+            data.DispatchTable = handle.Pin(DispatchTable);
+            data.RpcProtseqEndpointCount = 0u;
+            data.RpcProtseqEndpoint = IntPtr.Zero;
+            data.DefaultManagerEpv = IntPtr.Zero;
+            var InterpreterInfo = MIDL_SERVER_INFO.FromRpcInterface(handle, @interface, result, fnExecute);
+            data.InterpreterInfo = handle.Pin(InterpreterInfo); 
+            data.Flags = 0x04000000u;
+            Marshal.StructureToPtr(data, result.Handle, false);
+            return result;
+        }
+
+        uint Length;
+        RPC_SYNTAX_IDENTIFIER InterfaceId;
+        RPC_SYNTAX_IDENTIFIER TransferSyntax;
+        IntPtr /*PRPC_DISPATCH_TABLE*/ DispatchTable;
+        uint RpcProtseqEndpointCount;
+        IntPtr /*PRPC_PROTSEQ_ENDPOINT*/ RpcProtseqEndpoint;
+        IntPtr DefaultManagerEpv;
+        IntPtr InterpreterInfo;
+        uint Flags;
+
+
+
+        internal RPC_SERVER_INTERFACE(RpcHandle handle, Ptr<MIDL_SERVER_INFO> pServer, RpcInterface @interface)
         {
             Length = (uint) Marshal.SizeOf(typeof (RPC_SERVER_INTERFACE));
             InterfaceId = new RPC_SYNTAX_IDENTIFIER() {SyntaxGUID = @interface.IID, SyntaxVersion = @interface.VERSION};

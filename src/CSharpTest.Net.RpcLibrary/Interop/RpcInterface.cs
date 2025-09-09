@@ -64,40 +64,38 @@ namespace CSharpTest.Net.RpcLibrary
         /// </summary>
         public static RpcInterface Default(Guid IID)
         {
-            return new RpcInterface(IID, 1, 0, 1, DEFAULT_TYPE_FORMAT, DEFAULT_FUNC_FORMAT);
+            return new RpcInterface(IID, 1, 0, 1, DEFAULT_FUNC_FORMAT, new int[] { 0 }, DEFAULT_TYPE_FORMAT);
         }
 
         readonly Guid _IID;
         readonly RPC_VERSION _VERSION;
         readonly ushort _METHOD_COUNT;
-        readonly byte[] _TYPE_FORMAT;
         readonly byte[] _FUNC_FORMAT;
-        readonly Ptr<Byte[]> _FUNC_FORMAT_PTR;
+        readonly int[] _FUNC_FORMAT_OFFSETS;
+        readonly byte[] _TYPE_FORMAT;
 
 
         /// <summary>
         /// Populates the instance
         /// </summary>
         public RpcInterface(Guid IID, ushort MajorVersion, ushort MinorVersion, ushort MethodCount,
-            byte[] TypeFormat, byte[] FuncFormat)
+            byte[] FuncFormat, int[] FuncFormatOffsets, byte[] TypeFormat)
         {
             this._IID = IID;
             this._VERSION.MajorVersion = MajorVersion;
             this._VERSION.MinorVersion = MinorVersion;
             this._METHOD_COUNT = MethodCount;
-            this._TYPE_FORMAT = TypeFormat;
             this._FUNC_FORMAT = FuncFormat;
-            this._FUNC_FORMAT_PTR = new Ptr<byte[]>(_FUNC_FORMAT);
-
-
+            this._FUNC_FORMAT_OFFSETS = FuncFormatOffsets;
+            this._TYPE_FORMAT = TypeFormat;
         }
 
         internal Guid IID { get { return _IID; } }
         internal RPC_VERSION VERSION { get { return _VERSION; } }
         internal ushort METHOD_COUNT { get { return _METHOD_COUNT; } }
-        internal byte[] TYPE_FORMAT {  get {  return _TYPE_FORMAT; } }
         internal byte[] FUNC_FORMAT { get { return _FUNC_FORMAT; } }
-        internal Ptr<byte[]> FUNC_FORMAT_PTR { get { return _FUNC_FORMAT_PTR; } }
+        internal int[] FUNC_FORMAT_OFFSETS { get { return _FUNC_FORMAT_OFFSETS; } }
+        internal byte[] TYPE_FORMAT { get { return _TYPE_FORMAT; } }
 
 
     }
