@@ -14,34 +14,33 @@
 #endregion
 using System;
 using System.Text;
-using NUnit.Framework;
 
 namespace CSharpTest.Net.RpcLibrary.Test
 {
-    [TestFixture]
+    [TestClass]
     public class TestProtocols
     {
         string[] LocalNames = new string[] { null, "localhost", "127.0.0.1", "::1", Environment.MachineName };
 
-        [TestFixtureSetUp]
+        [TestInitialize]
         public void SetVerbose()
         { RpcServerApi.VerboseLogging = true; }
 
-        [Test]
+        [TestMethod]
         public void TcpIpTest()
         {
             ReversePingTest(RpcProtseq.ncacn_ip_tcp, LocalNames, "18080", 
                 RpcAuthentication.RPC_C_AUTHN_WINNT, RpcAuthentication.RPC_C_AUTHN_GSS_NEGOTIATE);
         }
 
-        [Test]
+        [TestMethod]
         public void NamedPipeTest()
         {
             ReversePingTest(RpcProtseq.ncacn_np, LocalNames, @"\pipe\testpipename", 
                 RpcAuthentication.RPC_C_AUTHN_NONE, RpcAuthentication.RPC_C_AUTHN_WINNT, RpcAuthentication.RPC_C_AUTHN_GSS_NEGOTIATE);
         }
 
-        [Test]
+        [TestMethod]
         public void LocalRpcTest()
         {
             ReversePingTest(RpcProtseq.ncalrpc, new string[] { null }, @"testsomename", 
@@ -61,7 +60,7 @@ namespace CSharpTest.Net.RpcLibrary.Test
         static void ReversePingTest(RpcProtseq protocol, string[] hostNames, string endpoint, RpcAuthentication auth)
         {
             Guid iid = Guid.NewGuid();
-            using (RpcServerApi server = new RpcServerApi(iid))
+            using (RpcServerApi server = new RpcServerApi(RpcInterface.Default(iid)))
             {
                 server.OnExecute += 
                     delegate(IRpcClientInfo client, byte[] arg)
@@ -79,7 +78,7 @@ namespace CSharpTest.Net.RpcLibrary.Test
 
                 foreach (string hostName in hostNames)
                 {
-                    using (RpcClientApi client = new RpcClientApi(iid, protocol, hostName, endpoint))
+                    using (RpcClientApi client = new RpcClientApi(RpcInterface.Default(iid), protocol, hostName, endpoint))
                     {
                         client.AuthenticateAs(null, auth == RpcAuthentication.RPC_C_AUTHN_NONE
                                                       ? RpcClientApi.Anonymous
@@ -88,8 +87,8 @@ namespace CSharpTest.Net.RpcLibrary.Test
                                                       ? RpcProtectionLevel.RPC_C_PROTECT_LEVEL_NONE
                                                       : RpcProtectionLevel.RPC_C_PROTECT_LEVEL_PKT_PRIVACY,
                                                   auth);
-
-                        Assert.AreEqual(expect, client.Execute(input));
+                        byte[] output = client.Execute(input);
+                        CollectionAssert.AreEqual(expect, output);
                     }
                 }
             }

@@ -14,22 +14,21 @@
 #endregion
 using System;
 using System.Diagnostics;
-using NUnit.Framework;
 
 namespace CSharpTest.Net.RpcLibrary.Test
 {
-    [TestFixture]
+    [TestClass]
     public class TestPerformance
     {
-        [TestFixtureSetUp]
+        [TestInitialize]
         public void NoVerboseLogging()
         { RpcServerApi.VerboseLogging = false; }
 
-        [Test]
+        [TestMethod]
         public void TestPerformanceWithLargePayloads()
         {
             Guid iid = Guid.NewGuid();
-            using (RpcServerApi server = new RpcServerApi(iid))
+            using (RpcServerApi server = new RpcServerApi(RpcInterface.Default(iid)))
             {
                 server.AddProtocol(RpcProtseq.ncalrpc, "lrpctest", 5);
                 server.AddAuthentication(RpcAuthentication.RPC_C_AUTHN_WINNT);
@@ -38,7 +37,7 @@ namespace CSharpTest.Net.RpcLibrary.Test
                     delegate(IRpcClientInfo client, byte[] arg)
                     { return arg; };
 
-                using (RpcClientApi client = new RpcClientApi(iid, RpcProtseq.ncalrpc, null, "lrpctest"))
+                using (RpcClientApi client = new RpcClientApi(RpcInterface.Default(iid), RpcProtseq.ncalrpc, null, "lrpctest"))
                 {
                     client.AuthenticateAs(null, RpcClientApi.Self, RpcProtectionLevel.RPC_C_PROTECT_LEVEL_PKT_PRIVACY, RpcAuthentication.RPC_C_AUTHN_WINNT);
                     client.Execute(new byte[0]);
@@ -58,11 +57,11 @@ namespace CSharpTest.Net.RpcLibrary.Test
             }
         }
 
-        [Test]
+        [TestMethod]
         public void TestPerformanceOnLocalRpc()
         {
             Guid iid = Guid.NewGuid();
-            using (RpcServerApi server = new RpcServerApi(iid))
+            using (RpcServerApi server = new RpcServerApi(RpcInterface.Default(iid)))
             {
                 server.AddProtocol(RpcProtseq.ncalrpc, "lrpctest", 5);
                 server.AddAuthentication(RpcAuthentication.RPC_C_AUTHN_WINNT);
@@ -71,7 +70,7 @@ namespace CSharpTest.Net.RpcLibrary.Test
                     delegate(IRpcClientInfo client, byte[] arg)
                     { return arg; };
 
-                using (RpcClientApi client = new RpcClientApi(iid, RpcProtseq.ncalrpc, null, "lrpctest"))
+                using (RpcClientApi client = new RpcClientApi(RpcInterface.Default(iid), RpcProtseq.ncalrpc, null, "lrpctest"))
                 {
                     client.AuthenticateAs(null, RpcClientApi.Self, RpcProtectionLevel.RPC_C_PROTECT_LEVEL_PKT_PRIVACY, RpcAuthentication.RPC_C_AUTHN_WINNT);
                     client.Execute(new byte[0]);
@@ -91,11 +90,11 @@ namespace CSharpTest.Net.RpcLibrary.Test
             }
         }
 
-        [Test]
+        [TestMethod]
         public void TestPerformanceOnNamedPipe()
         {
             Guid iid = Guid.NewGuid();
-            using (RpcServerApi server = new RpcServerApi(iid))
+            using (RpcServerApi server = new RpcServerApi(RpcInterface.Default(iid)))
             {
                 server.AddProtocol(RpcProtseq.ncacn_np, @"\pipe\testpipename", 5);
                 server.AddAuthentication(RpcAuthentication.RPC_C_AUTHN_WINNT);
@@ -104,7 +103,7 @@ namespace CSharpTest.Net.RpcLibrary.Test
                     delegate(IRpcClientInfo client, byte[] arg)
                     { return arg; };
 
-                using (RpcClientApi client = new RpcClientApi(iid, RpcProtseq.ncacn_np, null, @"\pipe\testpipename"))
+                using (RpcClientApi client = new RpcClientApi(RpcInterface.Default(iid), RpcProtseq.ncacn_np, null, @"\pipe\testpipename"))
                 {
                     client.AuthenticateAs(null, RpcClientApi.Self, RpcProtectionLevel.RPC_C_PROTECT_LEVEL_PKT_PRIVACY, RpcAuthentication.RPC_C_AUTHN_WINNT);
                     client.Execute(new byte[0]);
@@ -124,11 +123,11 @@ namespace CSharpTest.Net.RpcLibrary.Test
             }
         }
 
-        [Test]
+        [TestMethod]
         public void TestPerformanceOnTcpip()
         {
             Guid iid = Guid.NewGuid();
-            using (RpcServerApi server = new RpcServerApi(iid))
+            using (RpcServerApi server = new RpcServerApi(RpcInterface.Default(iid)))
             {
                 server.AddProtocol(RpcProtseq.ncacn_ip_tcp, @"18081", 5);
                 server.AddAuthentication(RpcAuthentication.RPC_C_AUTHN_WINNT);
@@ -137,7 +136,7 @@ namespace CSharpTest.Net.RpcLibrary.Test
                     delegate(IRpcClientInfo client, byte[] arg)
                     { return arg; };
 
-                using (RpcClientApi client = new RpcClientApi(iid, RpcProtseq.ncacn_ip_tcp, null, @"18081"))
+                using (RpcClientApi client = new RpcClientApi(RpcInterface.Default(iid), RpcProtseq.ncacn_ip_tcp, null, @"18081"))
                 {
                     client.AuthenticateAs(null, RpcClientApi.Self, RpcProtectionLevel.RPC_C_PROTECT_LEVEL_PKT_PRIVACY, RpcAuthentication.RPC_C_AUTHN_WINNT);
                     client.Execute(new byte[0]);

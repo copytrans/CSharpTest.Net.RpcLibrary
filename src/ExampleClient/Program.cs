@@ -30,7 +30,7 @@ namespace ExampleClient
             {
                 attempt = false;
                 // Open the connection based on the endpoint information and interface IID
-                using (var client = new RpcClientApi(iid, RpcProtseq.ncalrpc, null, "RpcExampleClientServer"))
+                using (var client = new RpcClientApi(RpcInterface.Default(iid), RpcProtseq.ncalrpc, null, "RpcExampleClientServer"))
                     //using (var client = new RpcClientApi(iid, RpcProtseq.ncacn_ip_tcp, null, @"18081"))
                 {
                     // Provide authentication information (not nessessary for LRPC)

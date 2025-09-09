@@ -67,6 +67,13 @@ namespace CSharpTest.Net.RpcLibrary
         }
 
         [Conditional("DEBUG")]
+        public static void Error(string message)
+        {
+            Trace.WriteLine(message, Category);
+        }
+
+
+        [Conditional("DEBUG")]
         public static void Error(Exception error)
         {
             Error("{0}", error);
@@ -77,7 +84,8 @@ namespace CSharpTest.Net.RpcLibrary
         {
             try
             {
-                Error(String.Format(message, arguments));
+                message = String.Format(message, arguments);
+                Error(message);
             }
             catch
             {

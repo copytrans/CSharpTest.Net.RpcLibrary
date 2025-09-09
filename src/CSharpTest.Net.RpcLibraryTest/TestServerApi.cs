@@ -14,18 +14,17 @@
 #endregion
 using System;
 using System.Collections.Generic;
-using NUnit.Framework;
 
 namespace CSharpTest.Net.RpcLibrary.Test
 {
-    [TestFixture]
+    [TestClass]
     public class TestServerApi
     {
-        [Test]
+        [TestMethod]
         public void TestUnregisterListener()
         {
             Guid iid = Guid.NewGuid();
-            using (RpcServerApi server = new RpcServerApi(iid))
+            using (RpcServerApi server = new RpcServerApi(RpcInterface.Default(iid)))
             {
                 server.AddProtocol(RpcProtseq.ncalrpc, "lrpctest", 5);
                 server.AddAuthentication(RpcAuthentication.RPC_C_AUTHN_WINNT);
@@ -34,7 +33,7 @@ namespace CSharpTest.Net.RpcLibrary.Test
                     delegate(IRpcClientInfo client, byte[] arg)
                     { return arg; };
 
-                using (RpcClientApi client = new RpcClientApi(iid, RpcProtseq.ncalrpc, null, "lrpctest"))
+                using (RpcClientApi client = new RpcClientApi(RpcInterface.Default(iid), RpcProtseq.ncalrpc, null, "lrpctest"))
                 {
                     client.AuthenticateAs(null, RpcClientApi.Self, RpcProtectionLevel.RPC_C_PROTECT_LEVEL_PKT_PRIVACY, RpcAuthentication.RPC_C_AUTHN_WINNT);
 
@@ -53,7 +52,7 @@ namespace CSharpTest.Net.RpcLibrary.Test
             }
         }
 
-        [Test]
+        [TestMethod]
         public void TestVerboseLog()
         {
             RpcServerApi.VerboseLogging = true;

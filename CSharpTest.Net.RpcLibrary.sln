@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpTest.Net.RpcLibrary", "src\CSharpTest.Net.RpcLibrary\CSharpTest.Net.RpcLibrary.csproj", "{399E67C2-A18D-4C5C-9FCF-8BEA884EC8D2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpTest.Net.RpcLibraryTest", "src\CSharpTest.Net.RpcLibraryTest\CSharpTest.Net.RpcLibraryTest.csproj", "{197601FB-7E62-47DA-8E48-B56C9AD5DF20}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{9AF6DEDD-F808-428C-9AF6-B986220DE678}"
 	ProjectSection(SolutionItems) = preProject
@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "idl", "idl", "{BBE3C2B8-B77
 		idl\interface.idl = idl\interface.idl
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpTest.Net.RpcLibraryTest", "src\CSharpTest.Net.RpcLibraryTest\CSharpTest.Net.RpcLibraryTest.csproj", "{073DE819-A7C8-9BC0-8E2F-5F95E909D729}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,10 +41,6 @@ Global
 		{399E67C2-A18D-4C5C-9FCF-8BEA884EC8D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{399E67C2-A18D-4C5C-9FCF-8BEA884EC8D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{399E67C2-A18D-4C5C-9FCF-8BEA884EC8D2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{197601FB-7E62-47DA-8E48-B56C9AD5DF20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{197601FB-7E62-47DA-8E48-B56C9AD5DF20}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{197601FB-7E62-47DA-8E48-B56C9AD5DF20}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{197601FB-7E62-47DA-8E48-B56C9AD5DF20}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5C44A4B8-2871-410A-9EF5-4E6C75928F51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5C44A4B8-2871-410A-9EF5-4E6C75928F51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C44A4B8-2871-410A-9EF5-4E6C75928F51}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,11 +49,15 @@ Global
 		{EFAEB823-4EEF-4D00-BDB9-BFAF009E7B7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFAEB823-4EEF-4D00-BDB9-BFAF009E7B7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFAEB823-4EEF-4D00-BDB9-BFAF009E7B7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{073DE819-A7C8-9BC0-8E2F-5F95E909D729}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{073DE819-A7C8-9BC0-8E2F-5F95E909D729}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{073DE819-A7C8-9BC0-8E2F-5F95E909D729}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{073DE819-A7C8-9BC0-8E2F-5F95E909D729}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{197601FB-7E62-47DA-8E48-B56C9AD5DF20} = {15CCC9A2-11AA-4467-90D8-D107C47F9627}
+		{073DE819-A7C8-9BC0-8E2F-5F95E909D729} = {15CCC9A2-11AA-4467-90D8-D107C47F9627}
 	EndGlobalSection
 EndGlobal

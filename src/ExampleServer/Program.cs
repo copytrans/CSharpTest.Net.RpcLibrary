@@ -26,7 +26,7 @@ namespace ExampleServer
             var iid = new Guid("{1B617C4B-BF68-4B8C-AE2B-A77E6A3ECEC5}");
             
             // Create the server instance, adjust the defaults to your needs.
-            using (var server = new RpcServerApi(iid, 100, ushort.MaxValue, allowAnonTcp: false))
+            using (var server = new RpcServerApi(RpcInterface.Default(iid), 100, ushort.MaxValue, allowAnonTcp: false))
             {
                 try
                 {

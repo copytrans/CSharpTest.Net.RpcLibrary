@@ -14,29 +14,28 @@
 #endregion
 using System;
 using System.Collections.Generic;
-using NUnit.Framework;
 
 namespace CSharpTest.Net.RpcLibrary.Test
 {
-    [TestFixture]
+    [TestClass]
     public class TestClientApi
     {
-        [TestFixtureSetUp]
+        [TestInitialize]
         public void VerboseLog()
         { RpcServerApi.VerboseLogging = true; }
 
-        [Test]
+        [TestMethod]
         public void TestPropertyProtocol()
         {
-            using (RpcClientApi client = new RpcClientApi(Guid.NewGuid(), RpcProtseq.ncacn_ip_tcp, null, "123"))
+            using (RpcClientApi client = new RpcClientApi(RpcInterface.Default(Guid.NewGuid()), RpcProtseq.ncacn_ip_tcp, null, "123"))
                 Assert.AreEqual(RpcProtseq.ncacn_ip_tcp, client.Protocol);
         }
 
-        [Test]
+        [TestMethod]
         public void TestClientAbandon()
         {
             Guid iid = Guid.NewGuid();
-            using (RpcServerApi server = new RpcServerApi(iid))
+            using (RpcServerApi server = new RpcServerApi(RpcInterface.Default(iid)))
             {
                 server.AddProtocol(RpcProtseq.ncalrpc, "lrpctest", 5);
                 server.AddAuthentication(RpcAuthentication.RPC_C_AUTHN_WINNT);
@@ -46,7 +45,7 @@ namespace CSharpTest.Net.RpcLibrary.Test
                     { return arg; };
 
                 {
-                    RpcClientApi client = new RpcClientApi(iid, RpcProtseq.ncalrpc, null, "lrpctest");
+                    RpcClientApi client = new RpcClientApi(RpcInterface.Default(iid), RpcProtseq.ncalrpc, null, "lrpctest");
                     client.AuthenticateAs(null, RpcClientApi.Self, RpcProtectionLevel.RPC_C_PROTECT_LEVEL_PKT_PRIVACY, RpcAuthentication.RPC_C_AUTHN_WINNT);
                     client.Execute(new byte[0]);
                     client = null;
@@ -59,22 +58,22 @@ namespace CSharpTest.Net.RpcLibrary.Test
             }
         }
 
-        [Test, ExpectedException(typeof(RpcException))]
+        [TestMethod, ExpectedException(typeof(RpcException))]
         public void TestClientCannotConnect()
         {
-            using (RpcClientApi client = new RpcClientApi(Guid.NewGuid(), RpcProtseq.ncalrpc, null, "lrpc-endpoint-doesnt-exist"))
+            using (RpcClientApi client = new RpcClientApi(RpcInterface.Default(Guid.NewGuid()), RpcProtseq.ncalrpc, null, "lrpc-endpoint-doesnt-exist"))
                 client.Execute(new byte[0]);
         }
 
-        [Test, ExpectedException(typeof(RpcException), ExpectedMessage = "The requested operation is not supported")]
+        [TestMethod, ExpectedException(typeof(RpcException), "The requested operation is not supported")]
         public void TestExceptionAssertRpcError()
         { RpcException.Assert(RpcError.RPC_S_CANNOT_SUPPORT); }
 
-        [Test, ExpectedException(typeof(RpcException), ExpectedMessage = "TEST_MESSAGE")]
+        [TestMethod, ExpectedException(typeof(RpcException), "TEST_MESSAGE")]
         public void TestExceptionExplicitMessage()
         { throw new RpcException("TEST_MESSAGE"); }
 
-        [Test, ExpectedException(typeof(RpcException), ExpectedMessage = "Unspecified rpc error")]
+        [TestMethod, ExpectedException(typeof(RpcException), "Unspecified rpc error")]
         public void TestExceptionDefaultMessage()
         { throw new RpcException(); }
 
