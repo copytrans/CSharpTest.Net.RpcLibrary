@@ -24,7 +24,7 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
                                                         0x1CEB, 0x11C9, 
                                                         0x9F, 0xE8, 0x08, 0x00, 0x2B, 0x10, 0x48, 0x60);
 
-        internal static Ptr<RPC_SERVER_INTERFACE> FromRpcInterface(RpcHandle handle, RpcInterface @interface, RpcExecute fnExecute)
+        internal static Ptr<RPC_SERVER_INTERFACE> FromRpcInterface(RpcHandle handle, RpcInterface @interface)
         {
             var result = handle.CreatePtr(new RPC_SERVER_INTERFACE());
             var data = new RPC_SERVER_INTERFACE();
@@ -36,7 +36,7 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
             data.RpcProtseqEndpointCount = 0u;
             data.RpcProtseqEndpoint = IntPtr.Zero;
             data.DefaultManagerEpv = IntPtr.Zero;
-            var InterpreterInfo = MIDL_SERVER_INFO.FromRpcInterface(handle, @interface, result, fnExecute);
+            var InterpreterInfo = MIDL_SERVER_INFO.FromRpcInterface(handle, @interface, result);
             data.InterpreterInfo = handle.Pin(InterpreterInfo); 
             data.Flags = 0x04000000u;
             Marshal.StructureToPtr(data, result.Handle, false);

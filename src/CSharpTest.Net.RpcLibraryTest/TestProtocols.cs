@@ -60,9 +60,10 @@ namespace CSharpTest.Net.RpcLibrary.Test
         static void ReversePingTest(RpcProtseq protocol, string[] hostNames, string endpoint, RpcAuthentication auth)
         {
             Guid iid = Guid.NewGuid();
-            using (RpcServerApi server = new RpcServerApi(RpcInterface.Default(iid)))
+            BuiltinRpcInterface @interface = BuiltinRpcInterface.Default(iid);
+            using (RpcServerApi server = new RpcServerApi(@interface))
             {
-                server.OnExecute += 
+                @interface.OnExecute += 
                     delegate(IRpcClientInfo client, byte[] arg)
                     {
                         Array.Reverse(arg);
@@ -78,7 +79,7 @@ namespace CSharpTest.Net.RpcLibrary.Test
 
                 foreach (string hostName in hostNames)
                 {
-                    using (RpcClientApi client = new RpcClientApi(RpcInterface.Default(iid), protocol, hostName, endpoint))
+                    using (RpcClientApi client = new RpcClientApi(BuiltinRpcInterface.Default(iid), protocol, hostName, endpoint))
                     {
                         client.AuthenticateAs(null, auth == RpcAuthentication.RPC_C_AUTHN_NONE
                                                       ? RpcClientApi.Anonymous

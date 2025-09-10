@@ -29,19 +29,16 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
         private IntPtr /* ULONG_PTR */ nCount;
         private IntPtr /* PMIDL_SYNTAX_INFO */ pSyntaxInfo;
 
-        internal static MIDL_SERVER_INFO FromRpcInterface(RpcHandle handle, RpcInterface @interface, Ptr<RPC_SERVER_INTERFACE> serverInterfacePtr, RpcExecute fnExecute)
+        private delegate uint RpcFunction();
+
+        internal static MIDL_SERVER_INFO FromRpcInterface(RpcHandle handle, RpcInterface @interface, Ptr<RPC_SERVER_INTERFACE> serverInterfacePtr)
         {
             MIDL_SERVER_INFO result = new MIDL_SERVER_INFO();
             MIDL_STUB_DESC StubDesc = MIDL_STUB_DESC.FromRpcServerInterface(handle, @interface, serverInterfacePtr);
             result.pStubDesc = handle.Pin(StubDesc);
-            var DispatchTable = new IntPtr[@interface.METHOD_COUNT];
-            for (var i = 0; i < DispatchTable.Length; i++)
-            {
-                DispatchTable[i] = handle.PinFunction(fnExecute);
-            }
-            result.DispatchTable = handle.Pin(DispatchTable);
-            result.ProcString = handle.Pin(@interface.FUNC_FORMAT);
-            result.FmtStringOffset = handle.Pin(@interface.FUNC_FORMAT_OFFSETS);
+            result.DispatchTable = handle.Pin(@interface.FUNCTIONS(handle));
+            result.ProcString = handle.Pin(@interface.FUNCTION_FORMATS);
+            result.FmtStringOffset = handle.Pin(@interface.FUNCTION_FORMAT_OFFSETS);
             result.ThunkTable = IntPtr.Zero;
             result.pTransferSyntax = IntPtr.Zero;
             result.nCount = IntPtr.Zero;
@@ -51,6 +48,4 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
 
     }
 
-    internal delegate uint RpcExecute(
-        IntPtr clientHandle, uint szInput, IntPtr input, out uint szOutput, out IntPtr output);
 }

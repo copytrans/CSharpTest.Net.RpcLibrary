@@ -37,7 +37,6 @@ namespace CSharpTest.Net.RpcLibrary
         /// <summary> The interface Id the service is using </summary>
         public readonly RpcInterface _interface;
         private readonly RpcHandle _handle;
-        private RpcExecuteHandler _handler;
 
         /// <summary>
         /// Enables verbose logging of the RPC calls to the Trace window
@@ -68,7 +67,7 @@ namespace CSharpTest.Net.RpcLibrary
             // Guid.Empty to avoid registration of any interface allowing access to AddProtocol/AddAuthentication
             // without creating a channel
             if (!Guid.Empty.Equals(_interface.IID))
-                ServerRegisterInterface(_handle, _interface, RpcEntryPoint, maxCalls, maxRequestBytes, allowAnonTcp);
+                ServerRegisterInterface(_handle, _interface, maxCalls, maxRequestBytes, allowAnonTcp);
         }
 
         /// <summary>
@@ -76,7 +75,6 @@ namespace CSharpTest.Net.RpcLibrary
         /// </summary>
         public void Dispose()
         {
-            _handler = null;
             StopListening();
             _handle.Dispose();
         }
@@ -128,88 +126,8 @@ namespace CSharpTest.Net.RpcLibrary
             _listenerCount.Decrement(ServerStopListening);
         }
 
-        private uint RpcEntryPoint(IntPtr clientHandle, uint szInput, IntPtr input, out uint szOutput, out IntPtr output)
-        {
-            output = IntPtr.Zero;
-            szOutput = 0;
-
-            try
-            {
-                byte[] bytesIn = new byte[szInput];
-                Marshal.Copy(input, bytesIn, 0, bytesIn.Length);
-
-                byte[] bytesOut;
-                using (RpcClientInfo client = new RpcClientInfo(clientHandle))
-                {
-                    bytesOut = Execute(client, bytesIn);
-                }
-                if (bytesOut == null)
-                {
-                    return (uint) RpcError.RPC_S_NOT_LISTENING;
-                }
-
-                szOutput = (uint) bytesOut.Length;
-                output = RpcApi.Alloc(szOutput);
-                Marshal.Copy(bytesOut, 0, output, bytesOut.Length);
-
-                return (uint) RpcError.RPC_S_OK;
-            }
-            catch (Exception ex)
-            {
-                RpcApi.Free(output);
-                output = IntPtr.Zero;
-                szOutput = 0;
-
-                Log.Error(ex);
-                return (uint) RpcError.RPC_E_FAIL;
-            }
-        }
-        /// <summary>
-        /// Can be over-ridden in a derived class to handle the incomming RPC request, or you can
-        /// subscribe to the OnExecute event.
-        /// </summary>
-        public virtual byte[] Execute(IRpcClientInfo client, byte[] input)
-        {
-            RpcExecuteHandler proc = _handler;
-            if (proc != null)
-            {
-                return proc(client, input);
-            }
-            return null;
-        }
-        /// <summary>
-        /// Allows a single subscription to this event to handle incomming requests rather than 
-        /// deriving from and overriding the Execute call.
-        /// </summary>
-        public event RpcExecuteHandler OnExecute
-        {
-            add
-            {
-                lock (this)
-                {
-                    Check.Assert<InvalidOperationException>(_handler == null, "The interface id is already registered.");
-                    _handler = value;
-                }
-            }
-            remove
-            {
-                lock (this)
-                {
-                    Check.NotNull(value);
-                    if (_handler != null)
-                        Check.Assert<InvalidOperationException>(
-                            Object.ReferenceEquals(_handler.Target, value.Target)
-                            && Object.ReferenceEquals(_handler.Method, value.Method)
-                            );
-                    _handler = null;
-                }
-            }
-        }
-        /// <summary>
-        /// The delegate format for the OnExecute event
-        /// </summary>
-        public delegate byte[] RpcExecuteHandler(IRpcClientInfo client, byte[] input);
-
+ 
+ 
         /* ********************************************************************
          * WinAPI INTEROP
          * *******************************************************************/
@@ -259,7 +177,7 @@ namespace CSharpTest.Net.RpcLibrary
         [DllImport("Rpcrt4.dll", EntryPoint = "RpcServerRegisterIf", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern RpcError RpcServerRegisterIf(IntPtr IfSpec, IntPtr MgrTypeUuid, IntPtr MgrEpv);
 
-        private static void ServerRegisterInterface(RpcHandle handle, RpcInterface @interface, RpcExecute fnExec, int maxCalls, int maxRequestBytes, bool allowAnonTcp)
+        private static void ServerRegisterInterface(RpcHandle handle, RpcInterface @interface, int maxCalls, int maxRequestBytes, bool allowAnonTcp)
         {
             const int RPC_IF_ALLOW_CALLBACKS_WITH_NO_AUTH = 0x0010;
             int flags = 0;
@@ -270,7 +188,7 @@ namespace CSharpTest.Net.RpcLibrary
                 fnAuth = hAuthCall.Handle;
             }
 
-            Ptr<RPC_SERVER_INTERFACE> sIf = RPC_SERVER_INTERFACE.FromRpcInterface(handle, @interface, fnExec); // MIDL_SERVER_INFO.Create(handle, @interface, fnExec);
+            Ptr<RPC_SERVER_INTERFACE> sIf = RPC_SERVER_INTERFACE.FromRpcInterface(handle, @interface); // MIDL_SERVER_INFO.Create(handle, @interface, fnExec);
 
             if (!allowAnonTcp && maxRequestBytes < 0)
                 RpcException.Assert(RpcServerRegisterIf(sIf.Handle, IntPtr.Zero, IntPtr.Zero));

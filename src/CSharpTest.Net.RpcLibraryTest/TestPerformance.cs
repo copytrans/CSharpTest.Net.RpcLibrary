@@ -28,16 +28,17 @@ namespace CSharpTest.Net.RpcLibrary.Test
         public void TestPerformanceWithLargePayloads()
         {
             Guid iid = Guid.NewGuid();
-            using (RpcServerApi server = new RpcServerApi(RpcInterface.Default(iid)))
+            BuiltinRpcInterface @interface = BuiltinRpcInterface.Default(iid);
+            using (RpcServerApi server = new RpcServerApi(@interface))
             {
                 server.AddProtocol(RpcProtseq.ncalrpc, "lrpctest", 5);
                 server.AddAuthentication(RpcAuthentication.RPC_C_AUTHN_WINNT);
                 server.StartListening();
-                server.OnExecute +=
+                @interface.OnExecute +=
                     delegate(IRpcClientInfo client, byte[] arg)
                     { return arg; };
 
-                using (RpcClientApi client = new RpcClientApi(RpcInterface.Default(iid), RpcProtseq.ncalrpc, null, "lrpctest"))
+                using (RpcClientApi client = new RpcClientApi(BuiltinRpcInterface.Default(iid), RpcProtseq.ncalrpc, null, "lrpctest"))
                 {
                     client.AuthenticateAs(null, RpcClientApi.Self, RpcProtectionLevel.RPC_C_PROTECT_LEVEL_PKT_PRIVACY, RpcAuthentication.RPC_C_AUTHN_WINNT);
                     client.Execute(new byte[0]);
@@ -61,16 +62,17 @@ namespace CSharpTest.Net.RpcLibrary.Test
         public void TestPerformanceOnLocalRpc()
         {
             Guid iid = Guid.NewGuid();
-            using (RpcServerApi server = new RpcServerApi(RpcInterface.Default(iid)))
+            BuiltinRpcInterface @interface = BuiltinRpcInterface.Default(iid);
+            using (RpcServerApi server = new RpcServerApi(@interface))
             {
                 server.AddProtocol(RpcProtseq.ncalrpc, "lrpctest", 5);
                 server.AddAuthentication(RpcAuthentication.RPC_C_AUTHN_WINNT);
                 server.StartListening();
-                server.OnExecute +=
+                @interface.OnExecute +=
                     delegate(IRpcClientInfo client, byte[] arg)
                     { return arg; };
 
-                using (RpcClientApi client = new RpcClientApi(RpcInterface.Default(iid), RpcProtseq.ncalrpc, null, "lrpctest"))
+                using (RpcClientApi client = new RpcClientApi(BuiltinRpcInterface.Default(iid), RpcProtseq.ncalrpc, null, "lrpctest"))
                 {
                     client.AuthenticateAs(null, RpcClientApi.Self, RpcProtectionLevel.RPC_C_PROTECT_LEVEL_PKT_PRIVACY, RpcAuthentication.RPC_C_AUTHN_WINNT);
                     client.Execute(new byte[0]);
@@ -94,16 +96,17 @@ namespace CSharpTest.Net.RpcLibrary.Test
         public void TestPerformanceOnNamedPipe()
         {
             Guid iid = Guid.NewGuid();
-            using (RpcServerApi server = new RpcServerApi(RpcInterface.Default(iid)))
+            BuiltinRpcInterface @interface = BuiltinRpcInterface.Default(iid);
+            using (RpcServerApi server = new RpcServerApi(@interface))
             {
                 server.AddProtocol(RpcProtseq.ncacn_np, @"\pipe\testpipename", 5);
                 server.AddAuthentication(RpcAuthentication.RPC_C_AUTHN_WINNT);
                 server.StartListening();
-                server.OnExecute +=
+                @interface.OnExecute +=
                     delegate(IRpcClientInfo client, byte[] arg)
                     { return arg; };
 
-                using (RpcClientApi client = new RpcClientApi(RpcInterface.Default(iid), RpcProtseq.ncacn_np, null, @"\pipe\testpipename"))
+                using (RpcClientApi client = new RpcClientApi(BuiltinRpcInterface.Default(iid), RpcProtseq.ncacn_np, null, @"\pipe\testpipename"))
                 {
                     client.AuthenticateAs(null, RpcClientApi.Self, RpcProtectionLevel.RPC_C_PROTECT_LEVEL_PKT_PRIVACY, RpcAuthentication.RPC_C_AUTHN_WINNT);
                     client.Execute(new byte[0]);
@@ -127,16 +130,17 @@ namespace CSharpTest.Net.RpcLibrary.Test
         public void TestPerformanceOnTcpip()
         {
             Guid iid = Guid.NewGuid();
-            using (RpcServerApi server = new RpcServerApi(RpcInterface.Default(iid)))
+            BuiltinRpcInterface @interface = BuiltinRpcInterface.Default(iid);
+            using (RpcServerApi server = new RpcServerApi(@interface))
             {
                 server.AddProtocol(RpcProtseq.ncacn_ip_tcp, @"18081", 5);
                 server.AddAuthentication(RpcAuthentication.RPC_C_AUTHN_WINNT);
                 server.StartListening();
-                server.OnExecute +=
+                @interface.OnExecute +=
                     delegate(IRpcClientInfo client, byte[] arg)
                     { return arg; };
 
-                using (RpcClientApi client = new RpcClientApi(RpcInterface.Default(iid), RpcProtseq.ncacn_ip_tcp, null, @"18081"))
+                using (RpcClientApi client = new RpcClientApi(BuiltinRpcInterface.Default(iid), RpcProtseq.ncacn_ip_tcp, null, @"18081"))
                 {
                     client.AuthenticateAs(null, RpcClientApi.Self, RpcProtectionLevel.RPC_C_PROTECT_LEVEL_PKT_PRIVACY, RpcAuthentication.RPC_C_AUTHN_WINNT);
                     client.Execute(new byte[0]);

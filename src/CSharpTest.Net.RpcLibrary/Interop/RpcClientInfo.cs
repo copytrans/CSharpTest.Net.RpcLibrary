@@ -17,9 +17,10 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using CSharpTest.Net.RpcLibrary.Interop.Structs;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 namespace CSharpTest.Net.RpcLibrary.Interop
 {
-    internal class RpcClientInfo : IRpcClientInfo, IDisposable
+    public class RpcClientInfo : IRpcClientInfo, IDisposable
     {
         private readonly IntPtr _clientHandle;
         private WindowsIdentity _user;
@@ -271,3 +272,4 @@ namespace CSharpTest.Net.RpcLibrary.Interop
         private static extern RpcError RpcRevertToSelfEx(IntPtr binding);
     }
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

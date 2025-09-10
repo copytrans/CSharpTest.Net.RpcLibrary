@@ -14,6 +14,7 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using static CSharpTest.Net.RpcLibrary.BuiltinRpcInterface;
 
 namespace CSharpTest.Net.RpcLibrary.Test
 {
@@ -24,23 +25,24 @@ namespace CSharpTest.Net.RpcLibrary.Test
         public void TestUnregisterListener()
         {
             Guid iid = Guid.NewGuid();
-            using (RpcServerApi server = new RpcServerApi(RpcInterface.Default(iid)))
+            BuiltinRpcInterface @interface = BuiltinRpcInterface.Default(iid);
+            using (RpcServerApi server = new RpcServerApi(@interface))
             {
                 server.AddProtocol(RpcProtseq.ncalrpc, "lrpctest", 5);
                 server.AddAuthentication(RpcAuthentication.RPC_C_AUTHN_WINNT);
                 server.StartListening();
-                RpcServerApi.RpcExecuteHandler handler = 
+                RpcExecutor handler =
                     delegate(IRpcClientInfo client, byte[] arg)
                     { return arg; };
 
-                using (RpcClientApi client = new RpcClientApi(RpcInterface.Default(iid), RpcProtseq.ncalrpc, null, "lrpctest"))
+                using (RpcClientApi client = new RpcClientApi(BuiltinRpcInterface.Default(iid), RpcProtseq.ncalrpc, null, "lrpctest"))
                 {
                     client.AuthenticateAs(null, RpcClientApi.Self, RpcProtectionLevel.RPC_C_PROTECT_LEVEL_PKT_PRIVACY, RpcAuthentication.RPC_C_AUTHN_WINNT);
 
-                    server.OnExecute += handler;
+                    @interface.OnExecute += handler;
                     client.Execute(new byte[0]);
-                    
-                    server.OnExecute -= handler;
+
+                    @interface.OnExecute -= handler;
                     try 
                     {
                         client.Execute(new byte[0]);

@@ -61,7 +61,7 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
             result.aGenericBindingRoutinePairs = new IntPtr();
             result.apfnExprEval = new IntPtr();
             result.aXmitQuintuple = new IntPtr();
-            result.pFormatTypes = handle.Pin(@interface.TYPE_FORMAT);
+            result.pFormatTypes = handle.Pin(@interface.TYPE_FORMATS);
             result.fCheckBounds = 1;
             result.Version = 0x60001u;
             result.pMallocFreeStruct = new IntPtr();

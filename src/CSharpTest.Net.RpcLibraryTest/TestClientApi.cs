@@ -27,7 +27,7 @@ namespace CSharpTest.Net.RpcLibrary.Test
         [TestMethod]
         public void TestPropertyProtocol()
         {
-            using (RpcClientApi client = new RpcClientApi(RpcInterface.Default(Guid.NewGuid()), RpcProtseq.ncacn_ip_tcp, null, "123"))
+            using (RpcClientApi client = new RpcClientApi(BuiltinRpcInterface.Default(Guid.NewGuid()), RpcProtseq.ncacn_ip_tcp, null, "123"))
                 Assert.AreEqual(RpcProtseq.ncacn_ip_tcp, client.Protocol);
         }
 
@@ -35,17 +35,18 @@ namespace CSharpTest.Net.RpcLibrary.Test
         public void TestClientAbandon()
         {
             Guid iid = Guid.NewGuid();
-            using (RpcServerApi server = new RpcServerApi(RpcInterface.Default(iid)))
+            BuiltinRpcInterface @interface = BuiltinRpcInterface.Default(iid);
+            using (RpcServerApi server = new RpcServerApi(@interface))
             {
                 server.AddProtocol(RpcProtseq.ncalrpc, "lrpctest", 5);
                 server.AddAuthentication(RpcAuthentication.RPC_C_AUTHN_WINNT);
                 server.StartListening();
-                server.OnExecute +=
+                @interface.OnExecute +=
                     delegate(IRpcClientInfo client, byte[] arg)
                     { return arg; };
 
                 {
-                    RpcClientApi client = new RpcClientApi(RpcInterface.Default(iid), RpcProtseq.ncalrpc, null, "lrpctest");
+                    RpcClientApi client = new RpcClientApi(BuiltinRpcInterface.Default(iid), RpcProtseq.ncalrpc, null, "lrpctest");
                     client.AuthenticateAs(null, RpcClientApi.Self, RpcProtectionLevel.RPC_C_PROTECT_LEVEL_PKT_PRIVACY, RpcAuthentication.RPC_C_AUTHN_WINNT);
                     client.Execute(new byte[0]);
                     client = null;
@@ -61,7 +62,7 @@ namespace CSharpTest.Net.RpcLibrary.Test
         [TestMethod, ExpectedException(typeof(RpcException))]
         public void TestClientCannotConnect()
         {
-            using (RpcClientApi client = new RpcClientApi(RpcInterface.Default(Guid.NewGuid()), RpcProtseq.ncalrpc, null, "lrpc-endpoint-doesnt-exist"))
+            using (RpcClientApi client = new RpcClientApi(BuiltinRpcInterface.Default(Guid.NewGuid()), RpcProtseq.ncalrpc, null, "lrpc-endpoint-doesnt-exist"))
                 client.Execute(new byte[0]);
         }
 

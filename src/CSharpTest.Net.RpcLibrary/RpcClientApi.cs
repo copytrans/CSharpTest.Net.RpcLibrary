@@ -283,7 +283,7 @@ namespace CSharpTest.Net.RpcLibrary
                 {
                     try
                     {
-                        var func_format_ptr = handle.Pin(@interface.FUNC_FORMAT);
+                        var func_format_ptr = handle.Pin(@interface.FUNCTION_FORMATS);
                         result = NdrClientCall2x64(pStub.Handle, func_format_ptr, handle.Handle,
                                                    input.Length,
                                                    pInputBuffer.Handle, out szResponse, out response);
@@ -309,7 +309,7 @@ namespace CSharpTest.Net.RpcLibrary
 
                         try
                         {
-                            var func_format_ptr = handle.Pin(@interface.FUNC_FORMAT);
+                            var func_format_ptr = handle.Pin(@interface.FUNCTION_FORMATS);
                             result = NdrClientCall2x86(pStub.Handle, func_format_ptr, pStack32.Handle);
                         }
                         catch (SEHException ex)

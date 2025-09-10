@@ -16,15 +16,24 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
 namespace CSharpTest.Net.RpcLibrary.Interop
 {
+    /// <summary>
+    /// A utility class for managing RPC memory objects
+    /// </summary>
+
     [System.Diagnostics.DebuggerDisplay("{Handle}")]
-    internal abstract class RpcHandle : IDisposable
+    public abstract class RpcHandle : IDisposable
     {
         internal IntPtr Handle;
         private readonly List<IDisposable> _pinnedAddresses = new List<IDisposable>();
 
-        internal IntPtr PinFunction<T>(T data)
+        /// <summary>
+        /// Create native function pointer for the specified delegate
+        /// </summary>
+        public IntPtr PinFunction<T>(T data)
             where T : class, ICloneable, ISerializable
         {
             FunctionPtr<T> instance = new FunctionPtr<T>(data);
@@ -98,3 +107,5 @@ namespace CSharpTest.Net.RpcLibrary.Interop
         protected abstract void DisposeHandle(ref IntPtr handle);
     }
 }
+
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

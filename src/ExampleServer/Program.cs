@@ -24,9 +24,10 @@ namespace ExampleServer
         {
             // The client and server must agree on the interface id to use:
             var iid = new Guid("{1B617C4B-BF68-4B8C-AE2B-A77E6A3ECEC5}");
-            
+
             // Create the server instance, adjust the defaults to your needs.
-            using (var server = new RpcServerApi(RpcInterface.Default(iid), 100, ushort.MaxValue, allowAnonTcp: false))
+            BuiltinRpcInterface @interface = BuiltinRpcInterface.Default(iid);
+            using (var server = new RpcServerApi(@interface, 100, ushort.MaxValue, allowAnonTcp: false))
             {
                 try
                 {
@@ -42,7 +43,7 @@ namespace ExampleServer
                     server.AddAuthentication(RpcAuthentication.RPC_C_AUTHN_NONE);
 
                     // Subscribe the code to handle requests on this event:
-                    server.OnExecute +=
+                    @interface.OnExecute +=
                         delegate(IRpcClientInfo client, byte[] bytes)
                             {
                                 //Impersonate the caller:
