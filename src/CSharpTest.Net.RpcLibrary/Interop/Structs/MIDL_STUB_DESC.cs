@@ -53,10 +53,10 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
         private static MIDL_STUB_DESC FromRpcInterface(RpcHandle handle, RpcInterface @interface)
         {
             var result = new MIDL_STUB_DESC();
-            // result.RpcInterfaceInformation = serverInterfacePtr.Handle;
+            result.RpcInterfaceInformation = IntPtr.Zero;
             result.pfnAllocate = RpcApi.AllocPtr.Handle;
             result.pfnFree = RpcApi.FreePtr.Handle;
-            // result.pAutoBindHandle = IntPtr.Zero;
+            result.pAutoBindHandle = IntPtr.Zero;
             result.apfnNdrRundownRoutines = new IntPtr();
             result.aGenericBindingRoutinePairs = new IntPtr();
             result.apfnExprEval = new IntPtr();
@@ -66,7 +66,7 @@ namespace CSharpTest.Net.RpcLibrary.Interop.Structs
             result.Version = 0x60001u;
             result.pMallocFreeStruct = new IntPtr();
             result.MIDLVersion = 0x8010274;
-            // result.CommFaultOffsets = IntPtr.Zero;
+            result.CommFaultOffsets = IntPtr.Zero;
             result.aUserMarshalQuadruple = new IntPtr();
             result.NotifyRoutineTable = new IntPtr();
             result.mFlags = new IntPtr(0x00000001);

@@ -16,12 +16,14 @@ using System;
 using System.Runtime.InteropServices;
 using CSharpTest.Net.RpcLibrary.Interop.Structs;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
 namespace CSharpTest.Net.RpcLibrary.Interop
 {
     /// <summary>
     /// WinAPI imports for RPC
     /// </summary>
-    internal static class RpcApi
+    public static class RpcApi
     {
         #region Memory Utils
 
@@ -29,7 +31,7 @@ namespace CSharpTest.Net.RpcLibrary.Interop
             CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
         private static extern IntPtr LocalFree(IntPtr memHandle);
 
-        internal static void Free(IntPtr ptr)
+        public static void Free(IntPtr ptr)
         {
             if (ptr != IntPtr.Zero)
             {
@@ -44,7 +46,7 @@ namespace CSharpTest.Net.RpcLibrary.Interop
             CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
         private static extern IntPtr LocalAlloc(UInt32 flags, UInt32 nBytes);
 
-        internal static IntPtr Alloc(uint size)
+        public static IntPtr Alloc(uint size)
         {
             IntPtr ptr = LocalAlloc(LPTR, size);
             Log.Verbose("{0} = LocalAlloc({1})", ptr, size);
@@ -65,3 +67,5 @@ namespace CSharpTest.Net.RpcLibrary.Interop
         #endregion
     }
 }
+
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
